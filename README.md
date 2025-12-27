@@ -34,7 +34,6 @@ docker-compose logs -f api
 | API | http://localhost:6060 |
 | Swagger UI | http://localhost:6060/docs |
 | ReDoc | http://localhost:6060/redoc |
-| Frontend | http://localhost:3000 (独立启动时) |
 
 ## API 接口
 
@@ -74,7 +73,7 @@ docker-compose logs -f api
 
 ```
 .
-├── src/aiops_tools/          # 后端源码
+├── src/aiops_tools/          # 源码
 │   ├── api/v1/endpoints/     # API 端点
 │   │   ├── tools.py          # 工具和分类管理
 │   │   └── llm.py            # LLM 兼容接口
@@ -91,9 +90,7 @@ docker-compose logs -f api
 │   │   ├── tool_executor.py  # 脚本执行器
 │   │   └── tool_validator.py # 工具验证器
 │   └── main.py               # 应用入口
-├── frontend/                 # 前端源码 (React + TypeScript)
 ├── alembic/                  # 数据库迁移
-├── specs/                    # 设计文档
 ├── docker-compose.yml        # Docker 编排
 ├── Dockerfile                # Docker 镜像
 └── pyproject.toml            # Python 依赖
@@ -203,9 +200,8 @@ curl -X POST http://localhost:6060/api/v1/llm/tools/invoke \
 - Python 3.11+
 - PostgreSQL 16+
 - Redis 7+
-- Node.js 18+ (前端开发)
 
-### 启动后端
+### 启动服务
 
 ```bash
 # 安装依赖
@@ -213,14 +209,6 @@ pip install -e .
 
 # 启动服务（需要 PostgreSQL 和 Redis）
 uvicorn aiops_tools.main:app --host 0.0.0.0 --port 6060 --reload
-```
-
-### 启动前端
-
-```bash
-cd frontend
-npm install
-npm run dev
 ```
 
 ### 环境变量
@@ -235,18 +223,12 @@ npm run dev
 
 ## 技术栈
 
-**后端**
-- FastAPI - Web 框架
-- SQLModel - ORM
-- PostgreSQL - 数据库
-- Redis - 缓存
-- Pydantic - 数据验证
-
-**前端**
-- React 18
-- TypeScript
-- Vite
-- Tailwind CSS
+- **FastAPI** - Web 框架
+- **SQLModel** - ORM
+- **PostgreSQL** - 数据库
+- **Redis** - 缓存
+- **Pydantic** - 数据验证
+- **Docker** - 容器化部署
 
 ## License
 
