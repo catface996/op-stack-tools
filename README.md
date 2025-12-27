@@ -2,6 +2,10 @@
 
 LLM Tool Management System - 创建、管理和执行 LLM 工具的平台。
 
+## 架构概览
+
+![AIOps Tools Architecture](doc/images/op-stack-tools-architecture.png)
+
 ## 功能特性
 
 - **分类管理**: 创建工具分类，组织和管理工具
