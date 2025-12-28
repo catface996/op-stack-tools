@@ -21,8 +21,10 @@ from aiops_tools.models import Tool, ToolCategory, ToolStatus, ToolVersion
 from aiops_tools.schemas import (
     CategoryDeleteRequest,
     CategoryGetRequest,
+    CategoryListRequest,
+    CategoryListResponse,
+    CategoryPaginatedData,
     CategoryUpdateRequest,
-    PaginatedData,
     ToolCategoryCreate,
     ToolCategoryResponse,
     ToolCreate,
@@ -30,6 +32,7 @@ from aiops_tools.schemas import (
     ToolGetRequest,
     ToolListRequest,
     ToolListResponse,
+    ToolPaginatedData,
     ToolResponse,
     ToolUpdateRequest,
 )
@@ -81,11 +84,43 @@ async def create_category(session: SessionDep, category_in: ToolCategoryCreate) 
         raise
 
 
-@router.post("/categories/list", response_model=list[ToolCategoryResponse], tags=["Categories"])
-async def list_categories(session: SessionDep) -> list[ToolCategory]:
-    """List all tool categories."""
-    result = await session.execute(select(ToolCategory))
-    return list(result.scalars().all())
+@router.post("/categories/list", response_model=CategoryListResponse, tags=["Categories"])
+async def list_categories(session: SessionDep, request: CategoryListRequest) -> CategoryListResponse:
+    """List tool categories with pagination (Constitution Principle V & VI compliant)."""
+    query = select(ToolCategory)
+
+    # Apply search filter
+    if request.search:
+        query = query.where(ToolCategory.name.ilike(f"%{request.search}%"))
+
+    # Get total count
+    count_query = select(func.count()).select_from(query.subquery())
+    total_elements = await session.scalar(count_query) or 0
+
+    # Apply pagination
+    query = query.offset((request.page - 1) * request.size).limit(request.size)
+    result = await session.execute(query)
+    categories = list(result.scalars().all())
+
+    # Calculate pagination metadata
+    total_pages = (total_elements + request.size - 1) // request.size if request.size > 0 else 0
+    is_first = request.page == 1
+    is_last = request.page >= total_pages if total_pages > 0 else True
+
+    return CategoryListResponse(
+        code=0,
+        message="success",
+        success=True,
+        data=CategoryPaginatedData(
+            content=categories,
+            page=request.page,
+            size=request.size,
+            totalElements=total_elements,
+            totalPages=total_pages,
+            first=is_first,
+            last=is_last,
+        ),
+    )
 
 
 @router.post("/categories/get", response_model=ToolCategoryResponse, tags=["Categories"])
@@ -206,7 +241,7 @@ async def list_tools(session: SessionDep, request: ToolListRequest) -> ToolListR
         code=0,
         message="success",
         success=True,
-        data=PaginatedData(
+        data=ToolPaginatedData(
             content=tools,
             page=request.page,
             size=request.size,

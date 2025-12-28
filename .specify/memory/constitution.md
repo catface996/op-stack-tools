@@ -1,17 +1,14 @@
 <!--
 Sync Impact Report:
-- Version change: 1.0.0 → 1.1.0
-- Added principles:
+- Version change: 1.1.0 → 1.2.0
+- Added sections:
+  - Development Environment (IMMUTABLE) - Port 8083, DO NOT MODIFY
+- Previous changes (v1.1.0):
   - V. Pagination Standards
   - VI. Response Format
-- Updated sections:
-  - API Standards (pagination request/response format)
-- Templates requiring updates:
-  - .specify/templates/plan-template.md ✅ (Constitution Check section exists)
-  - .specify/templates/spec-template.md ✅ (No constitution-specific updates needed)
-- Follow-up TODOs:
-  - Update existing list endpoints to use new pagination format
-  - Update response format to include code/message/success wrapper
+- Completed TODOs:
+  - ✅ Update existing list endpoints to use new pagination format
+  - ✅ Update response format to include code/message/success wrapper
 -->
 
 # AIOps Tools Constitution
@@ -184,6 +181,11 @@ All API responses MUST follow a standardized wrapper format.
 - Cache/Queue: Redis 7+
 - Task Queue: Celery (optional)
 
+**Development Environment** (IMMUTABLE):
+- Port: `8083` - Development server port, DO NOT MODIFY
+- Host: `0.0.0.0` - Bind to all interfaces
+- Reload: Enabled in debug mode
+
 **Operations Tools Dependencies**:
 - Kubernetes: `kubernetes` client library
 - Database: `psycopg2` (PostgreSQL), `mysql-connector-python` (MySQL)
@@ -214,4 +216,4 @@ All API responses MUST follow a standardized wrapper format.
 - All code reviews MUST verify compliance with these principles
 - Use `CLAUDE.md` for runtime development guidance
 
-**Version**: 1.0.0 | **Ratified**: 2025-12-27 | **Last Amended**: 2025-12-27
+**Version**: 1.2.0 | **Ratified**: 2025-12-27 | **Last Amended**: 2025-12-28

@@ -93,8 +93,49 @@ class ToolResponse(ToolBase):
     model_config = {"from_attributes": True}
 
 
-class PaginatedData(BaseModel):
-    """Paginated data following constitution standards (Principle V)."""
+# Pagination base request (Constitution Principle V)
+class PaginationRequest(BaseModel):
+    """Base pagination request following constitution standards (Principle V)."""
+
+    page: int = Field(1, ge=1, description="Page number, starts from 1")
+    size: int = Field(20, ge=1, le=100, description="Page size, range 1-100")
+    # Gateway-injected fields (hidden from user input in OpenAPI)
+    tenantId: str | None = Field(None, json_schema_extra={"hidden": True})
+    traceId: str | None = Field(None, json_schema_extra={"hidden": True})
+    userId: str | None = Field(None, json_schema_extra={"hidden": True})
+
+
+# Category pagination
+class CategoryPaginatedData(BaseModel):
+    """Paginated data for categories following constitution standards (Principle V)."""
+
+    content: list[ToolCategoryResponse]
+    page: int
+    size: int
+    totalElements: int
+    totalPages: int
+    first: bool
+    last: bool
+
+
+class CategoryListRequest(PaginationRequest):
+    """Request schema for listing categories following constitution standards (Principle V)."""
+
+    search: str | None = Field(None, description="Search by category name")
+
+
+class CategoryListResponse(BaseModel):
+    """Paginated list response for categories following constitution standards (Principle V & VI)."""
+
+    code: int = 0
+    message: str = "success"
+    success: bool = True
+    data: CategoryPaginatedData
+
+
+# Tool pagination
+class ToolPaginatedData(BaseModel):
+    """Paginated data for tools following constitution standards (Principle V)."""
 
     content: list[ToolResponse]
     page: int
@@ -111,22 +152,16 @@ class ToolListResponse(BaseModel):
     code: int = 0
     message: str = "success"
     success: bool = True
-    data: PaginatedData
+    data: ToolPaginatedData
 
 
 # Request schemas for POST-only API
-class ToolListRequest(BaseModel):
+class ToolListRequest(PaginationRequest):
     """Request schema for listing tools following constitution standards (Principle V)."""
 
-    page: int = Field(1, ge=1, description="Page number, starts from 1")
-    size: int = Field(20, ge=1, le=100, description="Page size, range 1-100")
     status: ToolStatus | None = None
     category_id: UUID | None = None
     search: str | None = None
-    # Gateway-injected fields (hidden from user input in OpenAPI)
-    tenantId: str | None = Field(None, json_schema_extra={"hidden": True})
-    traceId: str | None = Field(None, json_schema_extra={"hidden": True})
-    userId: str | None = Field(None, json_schema_extra={"hidden": True})
 
 
 class ToolGetRequest(BaseModel):
