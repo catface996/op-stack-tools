@@ -1,5 +1,6 @@
 """Database models."""
 
+from aiops_tools.models.agent_binding import AgentToolBinding
 from aiops_tools.models.base import BaseModel
 from aiops_tools.models.tool import (
     ExecutionStatus,
@@ -11,6 +12,7 @@ from aiops_tools.models.tool import (
 )
 
 __all__ = [
+    "AgentToolBinding",
     "BaseModel",
     "Tool",
     "ToolCategory",

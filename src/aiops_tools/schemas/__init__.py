@@ -1,5 +1,14 @@
 """Pydantic schemas for request/response."""
 
+from aiops_tools.schemas.agent_binding import (
+    BindingListResponse,
+    BindingPaginatedData,
+    BindingResult,
+    BindToolsRequest,
+    BindToolsResponse,
+    BoundToolsRequest,
+    UnboundToolsRequest,
+)
 from aiops_tools.schemas.llm import (
     LLMTool,
     LLMToolFunction,
@@ -43,6 +52,14 @@ __all__ = [
     "ToolPaginatedData",
     "ToolListRequest",
     "ToolListResponse",
+    # Agent Binding schemas (Constitution Principle V & VI)
+    "BindingListResponse",
+    "BindingPaginatedData",
+    "BindingResult",
+    "BindToolsRequest",
+    "BindToolsResponse",
+    "BoundToolsRequest",
+    "UnboundToolsRequest",
     # Category schemas
     "ToolCategoryCreate",
     "ToolCategoryResponse",
