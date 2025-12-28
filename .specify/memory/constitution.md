@@ -91,17 +91,13 @@ All list endpoints MUST use standardized pagination request and response formats
 ```json
 {
   "page": 1,
-  "size": 20,
-  "tenantId": null,
-  "traceId": null,
-  "userId": null
+  "size": 20
 }
 ```
 
 **Rules**:
 - `page`: Page number, starts from 1, default 1, minimum 1
 - `size`: Page size, default 20, range 1-100
-- `tenantId`, `traceId`, `userId`: Gateway-injected fields (hidden from user input)
 
 **Pagination Response Format**:
 ```json

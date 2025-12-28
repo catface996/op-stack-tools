@@ -99,10 +99,6 @@ class PaginationRequest(BaseModel):
 
     page: int = Field(1, ge=1, description="Page number, starts from 1")
     size: int = Field(20, ge=1, le=100, description="Page size, range 1-100")
-    # Gateway-injected fields (hidden from user input in OpenAPI)
-    tenantId: str | None = Field(None, json_schema_extra={"hidden": True})
-    traceId: str | None = Field(None, json_schema_extra={"hidden": True})
-    userId: str | None = Field(None, json_schema_extra={"hidden": True})
 
 
 # Category pagination
