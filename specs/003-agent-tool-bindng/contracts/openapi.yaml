@@ -1,0 +1,337 @@
+openapi: 3.0.3
+info:
+  title: Agent-Tool Binding API
+  description: API for managing agent-tool bindings in AIOps Tools platform
+  version: 1.0.0
+  contact:
+    name: AIOps Team
+    email: aiops@example.com
+
+servers:
+  - url: http://localhost:8083
+    description: Development server
+
+paths:
+  /api/tools/v1/agent-bindng/bound:
+    post:
+      summary: Query bound tools for agent
+      description: Returns a paginated list of tools that are currently bound to the specified agent
+      operationId: queryBoundTools
+      tags:
+        - Agent Binding
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BoundToolsRequest'
+            example:
+              agentId: "agent-001"
+              page: 1
+              size: 20
+      responses:
+        '200':
+          description: Successful response with bound tools
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ToolListResponse'
+              example:
+                code: 0
+                message: "success"
+                success: true
+                data:
+                  content:
+                    - id: "550e8400-e29b-41d4-a716-446655440000"
+                      name: "k8s_list_pods"
+                      displayName: "List Kubernetes Pods"
+                      description: "List all pods in a namespace"
+                      status: "active"
+                  page: 1
+                  size: 20
+                  totalElements: 1
+                  totalPages: 1
+                  first: true
+                  last: true
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/tools/v1/agent-bindng/unbound:
+    post:
+      summary: Query unbound tools for agent
+      description: Returns a paginated list of tools that are NOT bound to the specified agent
+      operationId: queryUnboundTools
+      tags:
+        - Agent Binding
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UnboundToolsRequest'
+            example:
+              agentId: "agent-001"
+              page: 1
+              size: 20
+      responses:
+        '200':
+          description: Successful response with unbound tools
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ToolListResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/tools/v1/agent-bindng/bindng:
+    post:
+      summary: Bind tools to agent
+      description: Binds a set of tools to an agent using full replacement semantics (replaces all existing bindings)
+      operationId: bindToolsToAgent
+      tags:
+        - Agent Binding
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BindToolsRequest'
+            example:
+              agentId: "agent-001"
+              toolIds:
+                - "550e8400-e29b-41d4-a716-446655440000"
+                - "550e8400-e29b-41d4-a716-446655440001"
+      responses:
+        '200':
+          description: Successful binding
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BindToolsResponse'
+              example:
+                code: 0
+                message: "success"
+                success: true
+                data:
+                  agentId: "agent-001"
+                  boundToolCount: 2
+                  toolIds:
+                    - "550e8400-e29b-41d4-a716-446655440000"
+                    - "550e8400-e29b-41d4-a716-446655440001"
+        '400':
+          description: Invalid tool IDs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: 400
+                message: "Validation failed"
+                success: false
+                data: null
+                error:
+                  code: "INVALID_TOOL_IDS"
+                  message: "Some tool IDs do not exist or are not active"
+                  field: "toolIds"
+                  suggestion: "Use POST /api/tools/v1/tools/list to see available tools"
+                  details:
+                    invalidIds:
+                      - "550e8400-e29b-41d4-a716-446655440099"
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    BoundToolsRequest:
+      type: object
+      required:
+        - agentId
+      properties:
+        agentId:
+          type: string
+          minLength: 1
+          maxLength: 255
+          description: External agent identifier
+        page:
+          type: integer
+          minimum: 1
+          default: 1
+          description: Page number (starts from 1)
+        size:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+          description: Page size (1-100)
+
+    UnboundToolsRequest:
+      type: object
+      required:
+        - agentId
+      properties:
+        agentId:
+          type: string
+          minLength: 1
+          maxLength: 255
+          description: External agent identifier
+        page:
+          type: integer
+          minimum: 1
+          default: 1
+          description: Page number (starts from 1)
+        size:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+          description: Page size (1-100)
+
+    BindToolsRequest:
+      type: object
+      required:
+        - agentId
+        - toolIds
+      properties:
+        agentId:
+          type: string
+          minLength: 1
+          maxLength: 255
+          description: External agent identifier
+        toolIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+          maxItems: 100
+          description: List of tool IDs to bind (empty array to unbind all)
+
+    ToolListResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 0
+        message:
+          type: string
+          example: "success"
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/PaginatedToolData'
+
+    PaginatedToolData:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/ToolSummary'
+        page:
+          type: integer
+        size:
+          type: integer
+        totalElements:
+          type: integer
+        totalPages:
+          type: integer
+        first:
+          type: boolean
+        last:
+          type: boolean
+
+    ToolSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        displayName:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [draft, active, deprecated, disabled]
+        categoryId:
+          type: string
+          format: uuid
+          nullable: true
+
+    BindToolsResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 0
+        message:
+          type: string
+          example: "success"
+        success:
+          type: boolean
+          example: true
+        data:
+          $ref: '#/components/schemas/BindingResult'
+
+    BindingResult:
+      type: object
+      properties:
+        agentId:
+          type: string
+        boundToolCount:
+          type: integer
+        toolIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+        success:
+          type: boolean
+          example: false
+        data:
+          nullable: true
+        error:
+          $ref: '#/components/schemas/ErrorDetail'
+
+    ErrorDetail:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        field:
+          type: string
+          nullable: true
+        suggestion:
+          type: string
+          nullable: true
+        details:
+          type: object
+          nullable: true
+
+tags:
+  - name: Agent Binding
+    description: Agent-tool binding management operations
