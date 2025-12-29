@@ -3,7 +3,7 @@
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import PostgresDsn, RedisDsn
+from pydantic import RedisDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -36,7 +36,7 @@ class Settings(BaseSettings):
     algorithm: str = "HS256"
 
     # Database
-    database_url: PostgresDsn = "postgresql+asyncpg://postgres:postgres@localhost:5432/aiops_tools"  # type: ignore
+    database_url: str = "mysql+aiomysql://root:root123@localhost:3306/op_stack_tools"
 
     # Redis
     redis_url: RedisDsn = "redis://localhost:6379/0"  # type: ignore

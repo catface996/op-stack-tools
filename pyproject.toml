@@ -14,6 +14,7 @@ dependencies = [
     "sqlalchemy>=2.0.0",
     "sqlmodel>=0.0.14",
     "asyncpg>=0.29.0",
+    "aiomysql>=0.2.0",
     "alembic>=1.13.0",
     # Redis & Celery
     "redis>=5.0.0",

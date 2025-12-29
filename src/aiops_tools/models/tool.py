@@ -5,8 +5,7 @@ from enum import Enum
 from typing import Any
 from uuid import UUID
 
-from sqlalchemy import Column
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import Column, JSON
 from sqlmodel import Field, Relationship, SQLModel
 
 from aiops_tools.models.base import BaseModel
@@ -57,18 +56,18 @@ class Tool(BaseModel, table=True):
 
     # Tool metadata
     category_id: UUID | None = Field(default=None, foreign_key="tool_categories.id")
-    tags: list[str] = Field(default=[], sa_column=Column(JSONB))
+    tags: list[str] = Field(default=[], sa_column=Column(JSON))
 
     # Tool schema (JSON Schema format for parameters)
-    input_schema: dict[str, Any] = Field(default={}, sa_column=Column(JSONB))
-    output_schema: dict[str, Any] = Field(default={}, sa_column=Column(JSONB))
+    input_schema: dict[str, Any] = Field(default={}, sa_column=Column(JSON))
+    output_schema: dict[str, Any] = Field(default={}, sa_column=Column(JSON))
 
     # Python script content (for executor_type="python")
     script_content: str | None = None
 
     # Execution configuration
     executor_type: str = Field(default="python")  # python, http, shell, mcp
-    executor_config: dict[str, Any] = Field(default={}, sa_column=Column(JSONB))
+    executor_config: dict[str, Any] = Field(default={}, sa_column=Column(JSON))
 
     # Versioning (auto-incremented on each save)
     version: int = Field(default=1)
@@ -95,9 +94,9 @@ class ToolVersion(BaseModel, table=True):
     changelog: str | None = None
 
     # Snapshot of tool configuration at this version
-    input_schema: dict[str, Any] = Field(default={}, sa_column=Column(JSONB))
-    output_schema: dict[str, Any] = Field(default={}, sa_column=Column(JSONB))
-    executor_config: dict[str, Any] = Field(default={}, sa_column=Column(JSONB))
+    input_schema: dict[str, Any] = Field(default={}, sa_column=Column(JSON))
+    output_schema: dict[str, Any] = Field(default={}, sa_column=Column(JSON))
+    executor_config: dict[str, Any] = Field(default={}, sa_column=Column(JSON))
     script_content: str | None = None
 
     is_latest: bool = Field(default=True)
@@ -116,8 +115,8 @@ class ToolExecution(BaseModel, table=True):
 
     # Execution details
     status: ExecutionStatus = Field(default=ExecutionStatus.PENDING)
-    input_data: dict[str, Any] = Field(default={}, sa_column=Column(JSONB))
-    output_data: dict[str, Any] | None = Field(default=None, sa_column=Column(JSONB))
+    input_data: dict[str, Any] = Field(default={}, sa_column=Column(JSON))
+    output_data: dict[str, Any] | None = Field(default=None, sa_column=Column(JSON))
     error_message: str | None = None
 
     # Timing
