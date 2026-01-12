@@ -7,6 +7,8 @@ Auto-generated from all feature plans. Last updated: 2025-12-27
 - PostgreSQL (existing), tool definitions stored in `tools` table (002-ops-tools)
 - Python 3.11+ + FastAPI, SQLModel, kubernetes, psycopg2, mysql-connector-python, boto3, httpx (002-ops-tools)
 - PostgreSQL 15+ (tool definitions), Redis 7+ (caching) (002-ops-tools)
+- Python 3.11+ + FastAPI, SQLModel, SQLAlchemy, Pydantic (003-agent-tool-bindng)
+- PostgreSQL 15+ (existing database) (003-agent-tool-bindng)
 
 - Python 3.11+ + FastAPI, SQLModel, SQLAlchemy, asyncpg, Celery, Redis, Pydantic (001-llm-tool-management)
 
@@ -26,10 +28,10 @@ cd src [ONLY COMMANDS FOR ACTIVE TECHNOLOGIES][ONLY COMMANDS FOR ACTIVE TECHNOLO
 Python 3.11+: Follow standard conventions
 
 ## Recent Changes
+- 003-agent-tool-bindng: Added Python 3.11+ + FastAPI, SQLModel, SQLAlchemy, Pydantic
 - 002-ops-tools: Added Python 3.11+ + FastAPI, SQLModel, kubernetes, psycopg2, mysql-connector-python, boto3, httpx
 - 002-ops-tools: Added Python 3.11 + FastAPI, SQLModel, kubernetes (k8s client), psycopg2/mysql-connector (DB), boto3 (AWS)
 
-- 001-llm-tool-management: Added Python 3.11+ + FastAPI, SQLModel, SQLAlchemy, asyncpg, Celery, Redis, Pydantic
 
 <!-- MANUAL ADDITIONS START -->
 <!-- MANUAL ADDITIONS END -->
